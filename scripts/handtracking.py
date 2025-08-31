@@ -10,7 +10,12 @@ class handDetector():
         self.mindetconfidence=mindetconfidence
         self.mintrackconfidence=mintrackconfidence
         self.mphands=mp.solutions.hands
-        self.hands=self.mphands.Hands(self.mode,self.maxhands,self.mindetconfidence,self.mintrackconfidence) #.Hands requires these parameters
+        self.hands = self.mphands.Hands(
+                        static_image_mode=self.mode,
+                        max_num_hands=self.maxhands,
+                        min_detection_confidence=self.mindetconfidence,
+                        min_tracking_confidence=self.mintrackconfidence
+)
         self.skeletondraw=mp.solutions.drawing_utils
     
     def findHands(self,img,draw=True):
@@ -31,13 +36,13 @@ class handDetector():
             myhand=self.results.multi_hand_landmarks[handNumber]
             for id,lm in enumerate(myhand.landmark):#id is the location of hand points from hand map.png, lm is the x,y position of that id(handpoint) on the img window
                         #print(id,lm)
-                        h,w,c=img.shape()
+                        h,w,c=img.shape
                         centerx,centery=int(lm.x*w),int(lm.y*h)
                         #print(id, centerx,centery)
                         lmList.append([id,centerx,centery])
                         if draw:
                             #if id==0: #to map points from hand map.png, like 0 is the start of the palm and so on
-                            cv2.circle(img,(centerx,centery,25,(255,0,0),cv2.FILLED))
+                            cv2.circle(img,(centerx,centery),15,(255,0,0),cv2.FILLED)
 
         return lmList
 
@@ -48,7 +53,7 @@ def main():
     while True:
         success,img=cam.read()
         img=detector.findHands(img)
-        lmList=detector.findPoisiton(img)
+        lmList=detector.findPosition(img)
         if len(lmList)!=0:
             print(lmList[0])#helps find landmarks of a specific handpoint id
         cv2.imshow("Image",img)
